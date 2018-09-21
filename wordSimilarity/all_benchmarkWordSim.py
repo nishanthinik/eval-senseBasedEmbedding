@@ -77,15 +77,16 @@ def read_word_vectors(filename):
 if __name__ == '__main__':
     word_vec_file = sys.argv[1]
     word_sim_dir = sys.argv[2]
+    output_dir = sys.argv[3]
 
     word_vecs = read_word_vectors(word_vec_file)
     print('=================================================================================')
-    print("%6s" % "Serial", "%20s" % "Dataset", "%15s" % "Num Pairs", "%15s" % "Not found", "%15s" % "Rho")
+    print("%6s" % "Serial", "%20s" % "Data set", "%15s" % "Num Pairs", "%15s" % "Not found", "%15s" % "Rho")
     print('=================================================================================')
-    file = open("Result/Results_ad_it3.txt", "w")
-    file.write("Dataset" + "\t" + "Pairs" + "\t" + "Pairs Found" + "\t" + "Rho")
+    file = open(os.path.join(output_dir, "out.txt"), "w")
+    print(file.name)
+    file.write("Data set" + "\t" + "Pairs" + "\t" + "Pairs Found" + "\t" + "Rho")
     for i, filename in enumerate(os.listdir(word_sim_dir)):
-        result_file = open("datasets/" + filename, "w")
         manual_dict, auto_dict = ({}, {})
         not_found, total_size = (0, 0)
         for line in open(os.path.join(word_sim_dir, filename), 'r'):
@@ -98,7 +99,6 @@ if __name__ == '__main__':
             word_vec2 = {}
             for key in word_vecs:
                 if key.startswith(vec_word1) and "GRAM" not in key:
-                    # print (key)
                     c += 1
                     word_vec1[key] = word_vecs[key]
                     if word1 == word2:
@@ -116,20 +116,17 @@ if __name__ == '__main__':
                         if diff == 1:
                             diff = abs(float(sim_val) - float(val))
                             # print(diff)
-                            key_word1 = k
-                            key_word2 = j
                             final_sim_val = sim_val
                         elif diff > abs(float(sim_val) - float(val)):
                             diff = abs(float(sim_val) - float(val))
                             # print(diff)
                             final_sim_val = sim_val
-                            key_word1 = k
-                            key_word2 = j
+                            # print(i)
+                        # print(j)
+                        #print(final_sim_val)
+                        # print (len(sim_list))
                 manual_dict[(word1, word2)] = float(val)
                 auto_dict[(word1, word2)] = float(final_sim_val)
-                result_file.write(word1 + "\t" + word2 + "\t" + str(val) + "\t" + str(final_sim_val) + "\t" + key_word1
-                                  + "\t" + key_word2)
-                result_file.write("\n")
                 # print(final_sim_val)
             elif c == 0:
                 not_found += 1
